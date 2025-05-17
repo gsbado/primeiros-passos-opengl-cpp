@@ -1,9 +1,6 @@
 #ifndef __khrplatform_h_
 #define __khrplatform_h_
 
-#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
-
 /*
 ** Copyright (c) 2008-2018 The Khronos Group Inc.
 **
