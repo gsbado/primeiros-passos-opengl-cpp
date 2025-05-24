@@ -6,6 +6,9 @@
  * Última atualização em 13/08/2024
  *
  * Modificado por Gabriela Spanemberg Bado em 23/05/2025
+ * O código foi modificado para criar um triângulo a cada 3 cliques do mouse, usando uma cor diferente para cada triângulo.
+ * Cada clique adiciona um vértice, e ao completar 3 vértices, um novo triângulo é criado e desenhado.
+ * A estrutura Triangle armazena os 3 vértices e a cor do triângulo.
  */
 
 #include <iostream>
@@ -60,13 +63,12 @@ void main()
 
 struct Triangle 
 {
-	vec3 position;
-	vec3 dimensions;
-	vec3 color;
+    vec3 v[3];   // 3 vértices do triângulo
+    vec3 color;  // cor do triângulo
 };
 
 vector<Triangle> triangles;
-
+vector<vec3> tempVertices; // armazena os vértices clicados
 vector <vec3> colors;
 int iColor = 0;
 
@@ -132,8 +134,9 @@ int main()
 	GLuint VAO = createTriangle(-0.5,-0.5,0.5,-0.5,0.0,0.5);
 	
 	Triangle tri;
-	tri.position = vec3(400.0,300.0,0.0);
-	tri.dimensions = vec3(100.0,100.0,1.0);
+	tri.v[0] = vec3(-0.5, -0.5, 0.0);
+	tri.v[1] = vec3(0.5, -0.5, 0.0);
+	tri.v[2] = vec3(0.0, 0.5, 0.0);
 	tri.color = vec3(colors[iColor].r, colors[iColor].g, colors[iColor].b);
 	iColor = (iColor + 1) % colors.size();
 	triangles.push_back(tri);
@@ -156,19 +159,33 @@ int main()
 		glLineWidth(10);
 		glPointSize(20);
 
-		glBindVertexArray(VAO);
-
-		for (int i = 0; i < triangles.size(); i++)
+		// Desenha todos os triângulos criados
+		for (const auto& tri : triangles)
 		{
-			mat4 model = mat4(1); 
-			model = translate(model,vec3(triangles[i].position.x,triangles[i].position.y,0.0));
+			GLuint VAO, VBO;
+			glGenVertexArrays(1, &VAO);
+			glGenBuffers(1, &VBO);
 
-			model = rotate(model,radians(180.0f),vec3(0.0,0.0,1.0));
-			model = scale(model,vec3(triangles[i].dimensions.x,triangles[i].dimensions.y,1.0));
+			glBindVertexArray(VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			GLfloat vertices[9] = {
+				tri.v[0].x, tri.v[0].y, tri.v[0].z,
+				tri.v[1].x, tri.v[1].y, tri.v[1].z,
+				tri.v[2].x, tri.v[2].y, tri.v[2].z
+			};
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+			glEnableVertexAttribArray(0);
+
+			mat4 model = mat4(1.0f);
 			glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
+			glUniform4f(glGetUniformLocation(shaderID, "inputColor"), tri.color.r, tri.color.g, tri.color.b, 1.0f);
 
-			glUniform4f(colorLoc, triangles[i].color.r, triangles[i].color.g, triangles[i].color.b, 1.0f);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
+
+			glBindVertexArray(0);
+			glDeleteBuffers(1, &VBO);
+			glDeleteVertexArrays(1, &VAO);
 		}
 
 		glBindVertexArray(0);
@@ -286,16 +303,23 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
-		cout << xpos << "  " << ypos << endl;
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
 
-		Triangle tri;
-		tri.position = vec3(xpos,ypos,0.0);
-		tri.dimensions = vec3(100.0,100.0,1.0);
-		tri.color = vec3(colors[iColor].r, colors[iColor].g, colors[iColor].b);
-		iColor = (iColor + 1) % colors.size();
-		triangles.push_back(tri);
-		
-	}
+        // Adiciona o vértice clicado ao vetor temporário
+        tempVertices.push_back(vec3(xpos, ypos, 0.0f));
+
+        // Quando houver 3 vértices, cria um triângulo
+        if (tempVertices.size() == 3)
+        {
+            Triangle tri;
+            tri.v[0] = tempVertices[0];
+            tri.v[1] = tempVertices[1];
+            tri.v[2] = tempVertices[2];
+            tri.color = colors[iColor];
+            iColor = (iColor + 1) % colors.size();
+            triangles.push_back(tri);
+            tempVertices.clear();
+        }
+    }
 }
