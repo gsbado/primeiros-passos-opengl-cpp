@@ -53,12 +53,14 @@ set(EXERCISES
     HelloTriangle
     HelloTransform
     HelloTexture
-    AtividadesVivenciais/Atividade_01
-    DesafioM2/Parte1
-    DesafioM2/Parte2
+    HelloSprite
     Modulo2/Ex1Parte1M2
     Modulo2/Ex1Parte2M2
     Modulo3/M3JogoCores
+    AtividadesVivenciais/Atividade_01
+    AtividadesVivenciais/Atividade_02
+    DesafioM2/Parte1
+    DesafioM2/Parte2
 )
 
 add_compile_options(-Wno-pragmas)
