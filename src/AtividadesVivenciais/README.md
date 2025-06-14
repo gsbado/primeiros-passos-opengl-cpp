@@ -45,3 +45,15 @@ ______________________________________________
 ## Referência
 
 - [GLFW Input Guide](https://www.glfw.org/docs/latest/input_guide.html)
+
+______________________________________________
+
+
+# Atividade Vivencial 03
+
+## Grupo de colaboradores dessa atividade: Gabriela Bado e Sadi Júnior
+
+### Descrição
+
+- 
+
