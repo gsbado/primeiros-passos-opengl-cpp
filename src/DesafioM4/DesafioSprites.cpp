@@ -75,7 +75,7 @@ int main()
 	//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	// #endif
 
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Rossana", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Instanciando objetos texturizados", nullptr, nullptr);
 	if (!window)
 	{
 		std::cerr << "Falha ao criar a janela GLFW" << std::endl;
@@ -105,7 +105,7 @@ int main()
 
 	GLuint VAO = setupSprite();
 
-	GLuint texID = loadTexture("../assets/sprites/Vampirinho.png");
+	GLuint texID = loadTexture("../assets/sprites/owlet-monster/Owlet_Monster.png");
 
 	glUseProgram(shaderID);
 
