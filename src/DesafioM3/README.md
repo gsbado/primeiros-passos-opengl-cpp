@@ -37,9 +37,14 @@ ______________________________________________
 
 ______________________________________________
 
-## Requisitos
 
-- Compilador C++
-- GLFW
-- GLAD
-- GLM
+## Compilação, Requisitos e Execução
+
+Para compilar e rodar este projeto, certifique-se de ter um compilador C++ e as bibliotecas necessárias instaladas (GLFW, GLAD, GLM). Você pode usar o Visual Studio Code, CLion, ou outro editor/IDE de sua preferência.
+
+1. Abra o terminal e entre na pasta `build` do projeto: `cd build`
+2. Gere os arquivos de build com o CMake (ou configure seu projeto na IDE).
+3. Compile o projeto (pode utilizar `cmake --build .` no terminal).
+4. Execute o programa gerado (`./JogoDasCores`).
+
+Certifique-se de que as DLLs das bibliotecas estejam acessíveis no PATH do sistema, se necessário.
