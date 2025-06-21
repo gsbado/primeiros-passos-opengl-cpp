@@ -1,11 +1,25 @@
 # Jogo das Cores – Processamento Gráfico
 
-Este diretório contém o projeto "Jogo das Cores" desenvolvido para a disciplina de Processamento Gráfico, Unisinos.
+Este diretório contém o projeto "Jogo das Cores" desenvolvido para o Módulo 03 da disciplina de Processamento Gráfico, Unisinos.
+
 Aluna: Gabriela Spanemberg Bado
 
 ## 📁 Estrutura
 
-- `JogoDasCores.cpp` – Implementação do jogo interativo de eliminação de quadrados por cor.
+- `JogoDasCores.cpp` – Implementação do jogo interativo de eliminação de quadrados por cor. 
+
+______________________________________________
+
+## ⚙️ Compilação, Requisitos e Execução
+
+Para compilar e rodar este projeto, certifique-se de ter um compilador C++ e as bibliotecas necessárias instaladas (GLFW, GLAD, GLM). Você pode usar o Visual Studio Code, CLion, ou outro editor/IDE de sua preferência.
+
+1. Abra o terminal e entre na pasta `build` do projeto: `cd build`
+2. Gere os arquivos de build com o CMake (ou configure seu projeto na IDE).
+3. Compile o projeto (pode utilizar `cmake --build .` no terminal).
+4. Execute o programa gerado (`./JogoDasCores`).
+
+Certifique-se de que as DLLs das bibliotecas estejam acessíveis no PATH do sistema, se necessário.
 
 ______________________________________________
 
@@ -34,17 +48,3 @@ ______________________________________________
 - A janela usa projeção ortográfica com as mesmas dimensões da tela (800x600), então cada unidade corresponde a um pixel.
 - As cores dos quadrados são geradas aleatoriamente a cada reinício.
 - O sistema de pontos determina se você ganha ou perde.
-
-______________________________________________
-
-
-## Compilação, Requisitos e Execução
-
-Para compilar e rodar este projeto, certifique-se de ter um compilador C++ e as bibliotecas necessárias instaladas (GLFW, GLAD, GLM). Você pode usar o Visual Studio Code, CLion, ou outro editor/IDE de sua preferência.
-
-1. Abra o terminal e entre na pasta `build` do projeto: `cd build`
-2. Gere os arquivos de build com o CMake (ou configure seu projeto na IDE).
-3. Compile o projeto (pode utilizar `cmake --build .` no terminal).
-4. Execute o programa gerado (`./JogoDasCores`).
-
-Certifique-se de que as DLLs das bibliotecas estejam acessíveis no PATH do sistema, se necessário.
