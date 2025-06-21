@@ -64,6 +64,7 @@ set(EXERCISES
     DesafioM2/Parte1
     DesafioM2/Parte2
     DesafioM3/JogoDasCores
+    DesafioM4/DesafioSprites
 )
 
 add_compile_options(-Wno-pragmas)
