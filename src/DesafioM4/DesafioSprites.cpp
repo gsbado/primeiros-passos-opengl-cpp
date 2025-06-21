@@ -160,7 +160,7 @@ int main()
 
 	Sprite sprite3;
 	sprite3.textureID = loadTexture("../assets/sprites/Bushes5/Bush5_4.png");
-	sprite3.position = glm::vec2(700.0f, 180.0f);
+	sprite3.position = glm::vec2(700.0f, 75.0f);
 	sprite3.scale = glm::vec2(320.0f, 160.0f);
 	sprite3.rotation = 0.0f;
 
