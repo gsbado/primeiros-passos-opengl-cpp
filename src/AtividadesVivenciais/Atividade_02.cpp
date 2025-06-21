@@ -152,18 +152,6 @@ int main()
 	sprite1.scale = glm::vec2(100.0f, 100.0f);
 	sprite1.rotation = 0.0f;
 
-	Sprite sprite2;
-	sprite2.textureID = loadTexture("../assets/sprites/pink-monster/Pink_Monster.png");
-	sprite2.position = glm::vec2(400.0f, 200.0f);
-	sprite2.scale = glm::vec2(120.0f, 120.0f);
-	sprite2.rotation = 0.0f;
-
-	Sprite sprite3;
-	sprite3.textureID = loadTexture("../assets/sprites/Bushes5/Bush5_4.png");
-	sprite3.position = glm::vec2(700.0f, 75.0f);
-	sprite3.scale = glm::vec2(320.0f, 160.0f);
-	sprite3.rotation = 0.0f;
-
 	while (!glfwWindowShouldClose(window))
 	{
 		{
@@ -208,24 +196,6 @@ int main()
 		model = glm::scale(model, glm::vec3(sprite1.scale, 1.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glBindTexture(GL_TEXTURE_2D, sprite1.textureID);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		//desenhando Sprite 2
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(sprite2.position, 0.0f));
-		model = glm::rotate(model, sprite2.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(sprite2.scale, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glBindTexture(GL_TEXTURE_2D, sprite2.textureID);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		//desenhando Sprite 3
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(sprite3.position, 0.0f));
-		model = glm::rotate(model, sprite3.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(sprite3.scale, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glBindTexture(GL_TEXTURE_2D, sprite3.textureID);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glLineWidth(10);
