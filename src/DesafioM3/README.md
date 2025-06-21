@@ -17,10 +17,10 @@ ______________________________________________
 - O objetivo é eliminar todos os quadrados de cor semelhante ao clicar em um deles.
 - Cada clique avalia a cor do quadrado selecionado e elimina todos os quadrados com cor próxima (dentro de uma tolerância).
 - O sistema de pontos é o seguinte:
-  - Se eliminar **apenas um quadrado** no clique, ganha **5 pontos**.
-  - Se eliminar **mais de um quadrado** no mesmo clique, ganha **2 pontos**.
-- Se chegar a **100 pontos**, perde o jogo.
-- Se eliminar todos os quadrados antes de chegar a 100 pontos, vence o jogo.
+  - Se eliminar **apenas um quadrado** no clique, ganha **10 pontos mortais**.
+  - Se eliminar **mais de um quadrado** no mesmo clique, você receberá **0 pontos mortais**.
+- Se chegar a **100 pontos mortais**, é GAME OVER. Pode tentar novamente.
+- Se eliminar todos os quadrados antes de chegar a 100 pontos mortais, CONGRATULATIONS, vence o jogo.
 - O jogo permite reiniciar pressionando a tecla `R`.
 
 ## Como jogar
