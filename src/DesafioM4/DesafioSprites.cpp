@@ -18,11 +18,22 @@
 using namespace std;
 
 #include <glad/glad.h>
-
 #include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+struct Sprite
+{
+    glm::vec2 position;
+    glm::vec2 scale;
+    float rotation;
+    GLuint textureID;
+};
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
@@ -37,10 +48,12 @@ const GLchar *vertexShaderSource = R"(
  layout (location = 0) in vec3 position;
  layout (location = 1) in vec2 texc;
  out vec2 tex_coord;
+ uniform mat4 model;
+ uniform mat4 projection;
  void main()
  {
-	tex_coord = vec2(texc.s, 1.0 - texc.t);
-	gl_Position = vec4(position, 1.0);
+     tex_coord = vec2(texc.s, 1.0 - texc.t);
+     gl_Position = projection * model * vec4(position, 1.0);
  }
  )";
 
@@ -105,9 +118,12 @@ int main()
 
 	GLuint VAO = setupSprite();
 
-	GLuint texID = loadTexture("../assets/sprites/owlet-monster/Owlet_Monster.png");
-
 	glUseProgram(shaderID);
+
+	glm::mat4 projection = glm::ortho(0.0f, (float)WIDTH, 0.0f, (float)HEIGHT, -1.0f, 1.0f);
+	GLint modelLoc = glGetUniformLocation(shaderID, "model");
+	GLint projLoc = glGetUniformLocation(shaderID, "projection");
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	double prev_s = glfwGetTime();
 	double title_countdown_s = 0.1;
@@ -124,6 +140,30 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	Sprite background;
+	background.textureID = loadTexture("../assets/backgrounds/summer 2/Summer2.png");
+	background.position = glm::vec2(400.0f, 400.0f);
+	background.scale = glm::vec2(800.0f, 800.0f);
+	background.rotation = 0.0f;
+
+	Sprite sprite1;
+	sprite1.textureID = loadTexture("../assets/sprites/owlet-monster/Owlet_Monster.png");
+	sprite1.position = glm::vec2(200.0f, 200.0f);
+	sprite1.scale = glm::vec2(100.0f, 100.0f);
+	sprite1.rotation = 0.0f;
+
+	Sprite sprite2;
+	sprite2.textureID = loadTexture("../assets/sprites/pink-monster/Pink_Monster.png");
+	sprite2.position = glm::vec2(400.0f, 200.0f);
+	sprite2.scale = glm::vec2(120.0f, 120.0f);
+	sprite2.rotation = 0.0f;
+
+	Sprite sprite3;
+	sprite3.textureID = loadTexture("../assets/sprites/Bushes5/Bush5_4.png");
+	sprite3.position = glm::vec2(700.0f, 180.0f);
+	sprite3.scale = glm::vec2(320.0f, 160.0f);
+	sprite3.rotation = 0.0f;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		{
@@ -137,7 +177,7 @@ int main()
 				double fps = 1.0 / elapsed_s;
 
 				char tmp[256];
-				sprintf(tmp, "Ola Triangulo! -- Rossana\tFPS %.2lf", fps);
+				sprintf(tmp, "Instanciando objetos texturizados --Gabriela\tFPS %.2lf", fps);
 				glfwSetWindowTitle(window, tmp);
 
 				title_countdown_s = 0.1;
@@ -146,14 +186,53 @@ int main()
 
 		glfwPollEvents();
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // cor de fundo
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glBindVertexArray(VAO);
+		glm::mat4 model;
+
+		//Background
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(background.position, 0.0f));
+		model = glm::rotate(model, background.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(background.scale, 1.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glBindTexture(GL_TEXTURE_2D, background.textureID);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		//desenhando Sprite 1
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(sprite1.position, 0.0f));
+		model = glm::rotate(model, sprite1.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(sprite1.scale, 1.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glBindTexture(GL_TEXTURE_2D, sprite1.textureID);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		//desenhando Sprite 2
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(sprite2.position, 0.0f));
+		model = glm::rotate(model, sprite2.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(sprite2.scale, 1.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glBindTexture(GL_TEXTURE_2D, sprite2.textureID);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		//desenhando Sprite 3
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(sprite3.position, 0.0f));
+		model = glm::rotate(model, sprite3.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(sprite3.scale, 1.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glBindTexture(GL_TEXTURE_2D, sprite3.textureID);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glLineWidth(10);
 		glPointSize(20);
 
 		glBindVertexArray(VAO);
-		glBindTexture(GL_TEXTURE_2D, texID);
+		// glBindTexture(GL_TEXTURE_2D, texID);
 
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
