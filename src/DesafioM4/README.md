@@ -40,8 +40,12 @@ ______________________________________________
 - Cada sprite é desenhado aplicando uma matriz de modelo (translação, rotação, escala) e a matriz de projeção ortográfica.
 - O shader recebe as matrizes e a textura para renderizar cada sprite corretamente.
 
+![image](https://github.com/user-attachments/assets/2a830495-4568-430a-864a-f25823e9cc34)
+
 ## Observações
 
 - Para adicionar novos sprites, basta criar novas instâncias da struct Sprite, definir textura, posição, escala e rotação, e desenhar no loop principal.
 - As imagens das texturas devem estar nos caminhos corretos.
 - O código pode ser facilmente adaptado para diferentes resoluções alterando WIDTH, HEIGHT e a matriz de projeção.
+
+
