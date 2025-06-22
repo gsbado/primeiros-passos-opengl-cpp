@@ -181,7 +181,7 @@ int main()
 				double fps = 1.0 / elapsed_s;
 
 				char tmp[256];
-				sprintf(tmp, "Instanciando objetos texturizados --Gabriela\tFPS %.2lf", fps);
+				sprintf(tmp, "Parallax Scrolling --Gabriela\tFPS %.2lf", fps);
 				glfwSetWindowTitle(window, tmp);
 
 				title_countdown_s = 0.1;
@@ -284,6 +284,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 	if (sprite1.position.x < 0.0f) sprite1.position.x = 800.0f;
 	if (sprite1.position.y > 800.0f) sprite1.position.y = 0.0f;
 	if (sprite1.position.y < 0.0f) sprite1.position.y = 800.0f;
+	//limitando o quanto o personagem pode se mover no eixo Y
+	if (sprite1.position.y < 50.0f) sprite1.position.y = 50.0f;
+	if (sprite1.position.y > 300.0f) sprite1.position.y = 300.0f;
 }
 
 int setupShader()
