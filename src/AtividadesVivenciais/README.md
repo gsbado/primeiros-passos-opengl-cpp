@@ -24,8 +24,7 @@ Certifique-se de que as DLLs das bibliotecas estejam acessíveis no PATH do sist
 ______________________________________________
 
 # Atividade Vivencial 01 - Triângulos
-
-### Aluna: Gabriela Spanemberg Bado
+#### _Aluna: Gabriela Spanemberg Bado_
 
 ## Descrição
 
@@ -42,8 +41,7 @@ ______________________________________________
 
 
 # Atividade Vivencial 02 - Parallax Scrolling
-
-### Aluna: Gabriela Spanemberg Bado
+#### _Aluna: Gabriela Spanemberg Bado_
 
 ## Descrição
 
@@ -76,8 +74,7 @@ ______________________________________________
 ______________________________________________
 
 # Atividade Vivencial 03
-
-## Grupo de colaboradores dessa atividade: Gabriela Bado e Sadi Júnior
+#### _Alunos colaboradores dessa atividade: Gabriela Bado e Sadi Júnior_
 
 ### Descrição
 
