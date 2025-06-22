@@ -294,7 +294,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 		if (grumi.position.y < 0.0f) grumi.position.y = 800.0f;
 		// limitando o quanto o personagem pode se mover no eixo Y
 		if (grumi.position.y < 100.0f) grumi.position.y = 100.0f;
-		if (grumi.position.y > 250.0f) grumi.position.y = 250.0f;
+		if (grumi.position.y > 150.0f) grumi.position.y = 150.0f;
 	}
 }
 
