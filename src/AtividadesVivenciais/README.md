@@ -4,13 +4,28 @@ Esta pasta do repositório contém os exercícios desenvolvidos para as Atividad
 
 ## 📁 Estrutura
 
-- `Atividade_01.cpp` – Implementa uma atividade de criação de triângulos com OpenGL
-- `Atividade_02.cpp` – Movimento com teclado e camadas de fundo com deslocamento diferencial (parallax).
+- `Atividade_01.cpp` – Implementa uma atividade de criação de triângulos com OpenGL.
+- `Atividade_02.cpp` – Movimento de personagem com teclado, camadas de fundo com parallax e limites de movimentação para não sair do cenário.
+- 'Atividade_03.cpp' - 
 
 ______________________________________________
 
+## ⚙️ Compilação, Requisitos e Execução
 
-# Atividade Vivencial 01
+Para compilar e rodar este projeto, certifique-se de ter um compilador C++ e as bibliotecas necessárias instaladas (GLFW, GLAD, GLM). Você pode usar o Visual Studio Code, CLion, ou outro editor/IDE de sua preferência.
+
+1. Abra o terminal e entre na pasta `build` do projeto: `cd build`
+2. Gere os arquivos de build com o CMake (ou configure seu projeto na IDE).
+3. Compile o projeto (pode utilizar `cmake --build .` no terminal).
+4. Execute o programa gerado (`./JogoDasCores`).
+
+Certifique-se de que as DLLs das bibliotecas estejam acessíveis no PATH do sistema, se necessário.
+
+______________________________________________
+
+# Atividade Vivencial 01 - Triângulos
+
+### Aluna: Gabriela Spanemberg Bado
 
 ## Descrição
 
@@ -26,28 +41,39 @@ ______________________________________________
 ______________________________________________
 
 
-# Atividade Vivencial 02
+# Atividade Vivencial 02 - Parallax Scrolling
+
+### Aluna: Gabriela Spanemberg Bado
 
 ## Descrição
 
-- O usuário pode controlar um dos sprites da cena, que representa o personagem principal.
-- O personagem se move usando as setas do teclado (↑ ↓ ← →).
-- O fundo é composto por várias **camadas de cenário** (como chão, árvores, montanhas e nuvens).
-- Ao mover o personagem, as camadas do cenário se deslocam horizontalmente, criando um **efeito de parallax**:
-  - **Camadas próximas** ao personagem (ex: chão, árvores) se movem mais rápido.
-  - **Camadas distantes** (ex: montanhas, nuvens) se movem mais lentamente.
+- O usuário controla um personagem chamado Grumi(sprite) usando as setas do teclado (↑ ↓ ← →).
+- O personagem pode se mover livremente na horizontal e dentro de limites verticais definidos (não pode "voar" para fora do piso).
+- O fundo é composto por 4 camadas (nuvens, montanhas, base do piso, grama), todas alinhadas inicialmente.
+- Ao mover o personagem para os lados, as camadas do fundo se deslocam horizontalmente em velocidades diferentes, criando o efeito de **parallax scrolling**:
+  - Camadas mais próximas (grama e piso) se movem mais rápido.
+  - Camadas mais distantes (nuvens e montanhas) se movem mais devagar.
+- O personagem faz wrap-around horizontal: ao sair de um lado da tela, aparece do outro.
+- O fundo é desenhado com wrap-around horizontal para garantir continuidade visual.
+
+## Como funciona
+
+- Projeção ortográfica: cada unidade do mundo corresponde a um pixel na tela (800x800).
+- O cálculo do parallax é feito apenas no eixo X, mantendo o Y fixo para as camadas.
+- Limites verticais impedem o personagem de sair do "chão" do cenário.
+- O código utiliza GLFW para eventos de teclado e GLM para transformações.
+
+## Controles
+
+- Setas do teclado: movimentam o personagem.
+- ESC: fecha a aplicação.
 
 ## Observações
 
-- A janela utiliza projeção ortográfica com as mesmas dimensões da tela (800x600), facilitando o mapeamento entre mundo e tela.
-- A movimentação e os eventos do teclado são tratados utilizando as funcionalidades da biblioteca GLFW.
-
-## Referência
-
-- [GLFW Input Guide](https://www.glfw.org/docs/latest/input_guide.html)
+- As imagens das camadas e do personagem devem estar nos caminhos corretos.
+- O código pode ser adaptado para diferentes resoluções alterando WIDTH, HEIGHT e a matriz de projeção.
 
 ______________________________________________
-
 
 # Atividade Vivencial 03
 
@@ -55,5 +81,5 @@ ______________________________________________
 
 ### Descrição
 
-- 
+- (em desenvolvimento)
 
