@@ -14,7 +14,7 @@ Aluna: Gabriela Spanemberg Bado
 
 ______________________________________________
 
-## ⚙️ Compilação, Requisitos e Execução
+## ⚙️ Como Executar
 
 Para compilar e rodar este projeto, certifique-se de ter um compilador C++ e as bibliotecas necessárias instaladas (GLFW, GLAD, GLM, stb_image). Você pode usar o Visual Studio Code, CLion, ou outro editor/IDE de sua preferência.
 
@@ -29,7 +29,7 @@ ______________________________________________
 
 # Desafio Sprites: Instanciando objetos texturizados
 
-## Descrição
+## 💡Sobre o Programa
 
 - O programa exibe uma cena 2D composta por múltiplos sprites (quadrados texturizados) e um fundo.
 - Cada sprite pode ter uma textura, posição, escala e rotação diferentes.
@@ -38,7 +38,7 @@ ______________________________________________
 - O buffer de geometria (VAO) de cada sprite é um quadrilátero 1x1 centrado na origem, facilitando as transformações.
 - As texturas são carregadas com stb_image e aplicadas via shaders.
 
-## Como funciona
+## 🚀 Como funciona
 
 - O código utiliza GLM para manipulação de vetores, matrizes e transformações.
 - Cada sprite é desenhado aplicando uma matriz de modelo (translação, rotação, escala) e a matriz de projeção ortográfica.
@@ -46,7 +46,7 @@ ______________________________________________
 
 ![image](https://github.com/user-attachments/assets/2a830495-4568-430a-864a-f25823e9cc34)
 
-## Observações
+## 📌 Observações
 
 - Para adicionar novos sprites, basta criar novas instâncias da struct Sprite, definir textura, posição, escala e rotação, e desenhar no loop principal.
 - As imagens das texturas devem estar nos caminhos corretos.

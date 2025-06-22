@@ -10,7 +10,7 @@ Aluna: Gabriela Spanemberg Bado
 
 ______________________________________________
 
-## ⚙️ Compilação, Requisitos e Execução
+## ⚙️ Como Executar
 
 Para compilar e rodar este projeto, certifique-se de ter um compilador C++ e as bibliotecas necessárias instaladas (GLFW, GLAD, GLM). Você pode usar o Visual Studio Code, CLion, ou outro editor/IDE de sua preferência.
 
@@ -25,7 +25,7 @@ ______________________________________________
 
 # Jogo das Cores
 
-## Descrição
+## 💡 Sobre o Programa
 
 - O jogo exibe uma grade de quadrados coloridos.
 - O objetivo é eliminar todos os quadrados de cor semelhante ao clicar em um deles.
@@ -37,13 +37,13 @@ ______________________________________________
 - Se eliminar todos os quadrados antes de chegar a 100 pontos mortais, CONGRATULATIONS, vence o jogo.
 - O jogo permite reiniciar pressionando a tecla `R`.
 
-## Como jogar
+## 🎮 Controles
 
 - Clique com o botão esquerdo do mouse em um quadrado para selecionar e eliminar todos os quadrados de cor semelhante.
 - Pressione `R` para reiniciar o jogo a qualquer momento.
 - Pressione `ESC` para sair.
 
-## Observações
+## 📌 Observações
 
 - A janela usa projeção ortográfica com as mesmas dimensões da tela (800x600), então cada unidade corresponde a um pixel.
 - As cores dos quadrados são geradas aleatoriamente a cada reinício.
