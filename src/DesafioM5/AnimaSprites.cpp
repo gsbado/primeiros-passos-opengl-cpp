@@ -270,19 +270,19 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-		if (key == GLFW_KEY_RIGHT) {
+		if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D) {
 			grumi.position.x += moveSpeed;
 			grumi.iAnimation = 0;
 		}
-		if (key == GLFW_KEY_LEFT) {
+		if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A) {
 			grumi.position.x -= moveSpeed;
 			grumi.iAnimation = 0;
 		}
-		if (key == GLFW_KEY_UP) {
+		if (key == GLFW_KEY_UP || key == GLFW_KEY_W) {
 			grumi.position.y += moveSpeed;
 			grumi.iAnimation = 0;
 		}
-		if (key == GLFW_KEY_DOWN) {
+		if (key == GLFW_KEY_DOWN || key == GLFW_KEY_S) {
 			grumi.position.y -= moveSpeed;
 			grumi.iAnimation = 0;
 		}
