@@ -7,6 +7,10 @@ Aluna: Gabriela Spanemberg Bado
 ## 📁 Estrutura
 
 - `DesafioSprites.cpp` – Exemplo de cena 2D com múltiplos sprites texturizados, fundo e projeção ortográfica.
+- `assets/backgrounds/summer 2` – Pasta com as texturas utilizadas para o background.
+- `assets/sprites/owlet-monster` - Pasta com as textura utilizada para o sprite.
+- `assets/sprites/pink-monster` - Pasta com as textura utilizada para o sprite.
+- `assets/sprites/Bushes5` - Pasta com as textura utilizada para o sprite.
 
 ______________________________________________
 
