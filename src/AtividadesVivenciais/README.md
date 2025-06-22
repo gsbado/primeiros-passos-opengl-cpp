@@ -62,9 +62,12 @@ ______________________________________________
 - O código utiliza GLFW para eventos de teclado e GLM para transformações.
 
 ## Controles
-
-- Setas do teclado: movimentam o Grumi.
-- ESC: fecha a aplicação.
+- Os controles para movimentar o Grumi são realizados por meio do teclado:
+- **Seta Cima**: Move o personagem para cima
+- **Seta Baixo**: Move o personagem para baixo
+- **Seta Esquerda**: Move o personagem para a esquerda
+- **Seta Direita**: Move o personagem para a direita
+- **ESC**: Fecha o programa.
 
 ## Observações
 
