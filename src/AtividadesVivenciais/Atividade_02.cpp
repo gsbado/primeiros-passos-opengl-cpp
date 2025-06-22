@@ -68,6 +68,9 @@ const GLchar *fragmentShaderSource = R"(
  }
  )";
 
+Sprite layer1, layer2, layer3, layer4;
+Sprite sprite1;
+
 int main()
 {
 	glfwInit();
@@ -140,13 +143,26 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Sprite background;
-	background.textureID = loadTexture("../assets/backgrounds/summer 2/Summer2.png");
-	background.position = glm::vec2(400.0f, 400.0f);
-	background.scale = glm::vec2(800.0f, 800.0f);
-	background.rotation = 0.0f;
+	layer1.textureID = loadTexture("../assets/backgrounds/summer 2/layers/1.png"); //layer com nuvens
+	layer2.textureID = loadTexture("../assets/backgrounds/summer 2/layers/4.png"); //layer com outras nuvens
+	layer3.textureID = loadTexture("../assets/backgrounds/summer 2/layers/2.png"); //layer com chão
+	layer4.textureID = loadTexture("../assets/backgrounds/summer 2/layers/3.png"); //layer com grama
 
-	Sprite sprite1;
+	layer1.position = glm::vec2(400.0f, 400.0f);
+	layer2.position = glm::vec2(400.0f, 400.0f);
+	layer3.position = glm::vec2(400.0f, 400.0f);
+	layer4.position = glm::vec2(400.0f, 400.0f);
+
+	layer1.scale = glm::vec2(800.0f, 800.0f);
+	layer2.scale = glm::vec2(800.0f, 800.0f);
+	layer3.scale = glm::vec2(800.0f, 800.0f);
+	layer4.scale = glm::vec2(800.0f, 800.0f);
+
+	layer1.rotation = 0.0f;
+	layer2.rotation = 0.0f;
+	layer3.rotation = 0.0f;
+	layer4.rotation = 0.0f;
+
 	sprite1.textureID = loadTexture("../assets/sprites/owlet-monster/Owlet_Monster.png");
 	sprite1.position = glm::vec2(200.0f, 200.0f);
 	sprite1.scale = glm::vec2(100.0f, 100.0f);
@@ -180,14 +196,38 @@ int main()
 		glBindVertexArray(VAO);
 		glm::mat4 model;
 
-		//Background
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(background.position, 0.0f));
-		model = glm::rotate(model, background.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(background.scale, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glBindTexture(GL_TEXTURE_2D, background.textureID);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		//parallax 
+		layer1.position = glm::vec2(400.0f, 400.0f) + (sprite1.position - glm::vec2(400.0f, 400.0f)) * 0.2f;
+		layer2.position = glm::vec2(400.0f, 400.0f) + (sprite1.position - glm::vec2(400.0f, 400.0f)) * 0.4f;
+		layer3.position = glm::vec2(400.0f, 400.0f) + (sprite1.position - glm::vec2(400.0f, 400.0f)) * 0.6f;
+		layer4.position = glm::vec2(400.0f, 400.0f) + (sprite1.position - glm::vec2(400.0f, 400.0f)) * 1.0f;
+
+		//desenhando camadas do background
+		Sprite layers[] = {layer1, layer2, layer3, layer4};
+
+		for (Sprite layer : layers) {
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(layer.position, 0.0f));
+			model = glm::rotate(model, layer.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(layer.scale, 1.0f));
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			glBindTexture(GL_TEXTURE_2D, layer.textureID);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		}
+
+		//desenhando camadas do background com wrap-around horizontal
+		for (Sprite layer : layers) {
+			for (int i = -1; i <= 1; ++i) {
+				glm::mat4 model = glm::mat4(1.0f);
+				glm::vec2 pos = layer.position + glm::vec2(i * 800.0f, 0.0f);
+				model = glm::translate(model, glm::vec3(pos, 0.0f));
+				model = glm::rotate(model, layer.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+				model = glm::scale(model, glm::vec3(layer.scale, 1.0f));
+				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+				glBindTexture(GL_TEXTURE_2D, layer.textureID);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			}
+		}
 
 		//desenhando Sprite 1
 		model = glm::mat4(1.0f);
@@ -202,8 +242,6 @@ int main()
 		glPointSize(20);
 
 		glBindVertexArray(VAO);
-		// glBindTexture(GL_TEXTURE_2D, texID);
-
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -222,8 +260,29 @@ int main()
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
 {
+	float moveSpeed = 10.0f;
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+		if (key == GLFW_KEY_RIGHT) {
+			sprite1.position.x += moveSpeed;
+		}
+		if (key == GLFW_KEY_LEFT) {
+			sprite1.position.x -= moveSpeed;
+		}
+		if (key == GLFW_KEY_UP) {
+			sprite1.position.y += moveSpeed;
+		}
+		if (key == GLFW_KEY_DOWN) {
+			sprite1.position.y -= moveSpeed;
+		}
+	}
+	//wrap-around mantendo o personagem andando na tela
+	if (sprite1.position.x > 800.0f) sprite1.position.x = 0.0f;
+	if (sprite1.position.x < 0.0f) sprite1.position.x = 800.0f;
+	if (sprite1.position.y > 800.0f) sprite1.position.y = 0.0f;
+	if (sprite1.position.y < 0.0f) sprite1.position.y = 800.0f;
 }
 
 int setupShader()
