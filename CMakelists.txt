@@ -59,7 +59,7 @@ set(EXERCISES
     Modulo2/Ex1Parte2M2
     Modulo3/M3JogoCores
     AtividadesVivenciais/Atividade_01
-    #AtividadesVivenciais/Atividade_02
+    AtividadesVivenciais/Atividade_02
     #AtividadesVivenciais/Atividade_03
     DesafioM2/Parte1
     DesafioM2/Parte2
