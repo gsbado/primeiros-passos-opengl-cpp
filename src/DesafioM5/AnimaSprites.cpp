@@ -286,6 +286,15 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 			grumi.position.y -= moveSpeed;
 			grumi.iAnimation = 0;
 		}
+
+		// wrap-around mantendo o personagem andando na tela
+		if (grumi.position.x > 800.0f) grumi.position.x = 0.0f;
+		if (grumi.position.x < 0.0f) grumi.position.x = 800.0f;
+		if (grumi.position.y > 800.0f) grumi.position.y = 0.0f;
+		if (grumi.position.y < 0.0f) grumi.position.y = 800.0f;
+		// limitando o quanto o personagem pode se mover no eixo Y
+		if (grumi.position.y < 100.0f) grumi.position.y = 100.0f;
+		if (grumi.position.y > 250.0f) grumi.position.y = 250.0f;
 	}
 }
 
