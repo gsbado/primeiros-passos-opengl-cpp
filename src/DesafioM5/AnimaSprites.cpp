@@ -1,8 +1,13 @@
-/* Controle e Animação de Sprites
- * Modificado por Gabriela Spanemberg Bado em 18/06/2025
- * para a disciplina de Processamento Gráfico - Unisinos
- * Versão inicial: 7/4/2017
- * Última atualização em 21/06/2025
+/*
+ * Controle e Animação de Sprites - Código adaptado de:
+ *   - https://learnopengl.com/#!Getting-started/Hello-Triangle
+ *   - https://antongerdelan.net/opengl/glcontext2.html
+ *
+ * Modificado por: Gabriela Spanemberg Bado
+ *
+ * Histórico:
+ *   - Versão inicial: 07/04/2017
+ *   - Última atualização: 22/06/2025
  *
  */
 
@@ -14,30 +19,38 @@
 using namespace std;
 
 #include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include <glm/glm.hpp>
+#include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+using namespace glm;
+
+
 struct Sprite
 {
-    glm::vec2 position;
-    glm::vec2 scale;
-    float rotation;
+    GLuint VAO;
     GLuint textureID;
+    vec3 position;
+	vec3 dimensions;
+    float rotation;
+    int nAnimations, nFrames;
+    int iAnimation, iFrame;
+    float ds, dt;
 };
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 int setupShader();
-int setupSprite();
-int loadTexture(string filePath);
+int setupSprite(int nAnimations, int nFrames, float &ds, float &dt);
+int loadTexture(string filePath, int &width, int &height);
 
-const GLuint WIDTH = 800, HEIGHT = 800;
+const GLuint WIDTH = 800, HEIGHT = 600;
 
 const GLchar *vertexShaderSource = R"(
  #version 400
@@ -48,8 +61,8 @@ const GLchar *vertexShaderSource = R"(
  uniform mat4 projection;
  void main()
  {
-     tex_coord = vec2(texc.s, 1.0 - texc.t);
-     gl_Position = projection * model * vec4(position, 1.0);
+	tex_coord = vec2(texc.s, 1.0 - texc.t);
+	gl_Position = projection * model * vec4(position, 1.0);
  }
  )";
 
@@ -58,14 +71,16 @@ const GLchar *fragmentShaderSource = R"(
  in vec2 tex_coord;
  out vec4 color;
  uniform sampler2D tex_buff;
+ uniform vec2 offsetTex;
+
  void main()
  {
-	 color = texture(tex_buff,tex_coord);
+	 color = texture(tex_buff,tex_coord + offsetTex);
  }
  )";
 
-Sprite layer1, layer2, layer3, layer4;
-Sprite sprite1;
+Sprite grumi;
+Sprite background;
 
 int main()
 {
@@ -87,7 +102,7 @@ int main()
 	//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	// #endif
 
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Instanciando objetos texturizados", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Controle e Animação de Sprites -- Gabriela", nullptr, nullptr);
 	if (!window)
 	{
 		std::cerr << "Falha ao criar a janela GLFW" << std::endl;
@@ -115,14 +130,31 @@ int main()
 
 	GLuint shaderID = setupShader();
 
-	GLuint VAO = setupSprite();
+	int imgWidth, imgHeight;
+	GLuint textureID = loadTexture("../assets/sprites/owlet-monster/Owlet_Monster_Walk_6.png",imgWidth,imgHeight);
+
+	//configurando o sprite animado
+	grumi.nAnimations = 1;
+	grumi.nFrames = 6;
+	grumi.VAO = setupSprite(grumi.nAnimations, grumi.nFrames, grumi.ds, grumi.dt);
+	grumi.position = vec3(400.0, 150.0, 0.0);
+	grumi.dimensions = vec3(imgWidth / grumi.nFrames * 4, imgHeight / grumi.nAnimations * 4, 1.0);
+	grumi.textureID = textureID;
+	grumi.iAnimation = 0;
+	grumi.iFrame = 0;
+
+	background.nAnimations = 1;
+	background.nFrames = 1;
+	background.VAO = setupSprite(background.nAnimations,background.nFrames,background.ds,background.dt);
+	background.position = vec3(400.0, 300.0, 0.0);
+	background.textureID = loadTexture("../assets/backgrounds/nature_1/origbig.png",imgWidth,imgHeight);
+	background.dimensions = vec3(imgWidth/background.nFrames*0.5,imgHeight/background.nAnimations*0.5,1.0);
+	background.iAnimation = 0;
+	background.iFrame = 0;
+
+	
 
 	glUseProgram(shaderID);
-
-	glm::mat4 projection = glm::ortho(0.0f, (float)WIDTH, 0.0f, (float)HEIGHT, -1.0f, 1.0f);
-	GLint modelLoc = glGetUniformLocation(shaderID, "model");
-	GLint projLoc = glGetUniformLocation(shaderID, "projection");
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	double prev_s = glfwGetTime();
 	double title_countdown_s = 0.1;
@@ -133,37 +165,23 @@ int main()
 
 	glUniform1i(glGetUniformLocation(shaderID, "tex_buff"), 0);
 
+	mat4 projection = ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, GL_FALSE, value_ptr(projection));
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	layer1.textureID = loadTexture("../assets/backgrounds/summer5/layers/nuvens.png"); //layer com nuvens
-	layer2.textureID = loadTexture("../assets/backgrounds/summer5/layers/montanhas.png"); //layer com montanhas
-	layer3.textureID = loadTexture("../assets/backgrounds/summer5/layers/base-piso.png"); //layer com base do piso
-	layer4.textureID = loadTexture("../assets/backgrounds/summer5/layers/grama.png"); //layer com grama
 
-	layer1.position = glm::vec2(400.0f, 400.0f);
-	layer2.position = glm::vec2(400.0f, 400.0f);
-	layer3.position = glm::vec2(400.0f, 400.0f);
-	layer4.position = glm::vec2(400.0f, 400.0f);
+	double lastTime = 0.0;
+	double deltaT = 0.0;
+	double currTime = glfwGetTime();
+	double FPS = 12.0;
 
-	layer1.scale = glm::vec2(800.0f, 800.0f);
-	layer2.scale = glm::vec2(800.0f, 800.0f);
-	layer3.scale = glm::vec2(800.0f, 800.0f);
-	layer4.scale = glm::vec2(800.0f, 800.0f);
 
-	layer1.rotation = 0.0f;
-	layer2.rotation = 0.0f;
-	layer3.rotation = 0.0f;
-	layer4.rotation = 0.0f;
-
-	sprite1.textureID = loadTexture("../assets/sprites/owlet-monster/Owlet_Monster.png");
-	sprite1.position = glm::vec2(200.0f, 200.0f);
-	sprite1.scale = glm::vec2(100.0f, 100.0f);
-	sprite1.rotation = 0.0f;
-
+	vec2 offsetTexBg = vec2(0.0,0.0);
 	while (!glfwWindowShouldClose(window))
 	{
 		{
@@ -177,7 +195,7 @@ int main()
 				double fps = 1.0 / elapsed_s;
 
 				char tmp[256];
-				sprintf(tmp, "Parallax Scrolling --Gabriela\tFPS %.2lf", fps);
+				sprintf(tmp, "Controle e Animação de Sprites -- Gabriela\tFPS %.2lf", fps);
 				glfwSetWindowTitle(window, tmp);
 
 				title_countdown_s = 0.1;
@@ -189,68 +207,58 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glBindVertexArray(VAO);
-		glm::mat4 model;
-
-		//aplicando parallax apenas no eixo X
-		float deltaX = sprite1.position.x - 400.0f;
-		layer1.position = glm::vec2(400.0f + deltaX * 0.2f, 400.0f);
-		layer2.position = glm::vec2(400.0f + deltaX * 0.4f, 400.0f);
-		layer3.position = glm::vec2(400.0f + deltaX * 0.6f, 400.0f);
-		layer4.position = glm::vec2(400.0f + deltaX * 1.0f, 400.0f);
-
-		//desenhando camadas do background
-		Sprite layers[] = {layer1, layer2, layer3, layer4};
-
-		for (Sprite layer : layers) {
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(layer.position, 0.0f));
-			model = glm::rotate(model, layer.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-			model = glm::scale(model, glm::vec3(layer.scale, 1.0f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-			glBindTexture(GL_TEXTURE_2D, layer.textureID);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		}
-
-		//wrap-around horizontal das camadas do background
-		for (Sprite layer : layers) {
-			for (int i = -1; i <= 1; ++i) {
-				glm::mat4 model = glm::mat4(1.0f);
-				glm::vec2 pos = layer.position + glm::vec2(i * 800.0f, 0.0f);
-				model = glm::translate(model, glm::vec3(pos, 0.0f));
-				model = glm::rotate(model, layer.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-				model = glm::scale(model, glm::vec3(layer.scale, 1.0f));
-				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-				glBindTexture(GL_TEXTURE_2D, layer.textureID);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			}
-		}
-
-		//desenhando Sprite 1
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(sprite1.position, 0.0f));
-		model = glm::rotate(model, sprite1.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(sprite1.scale, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glBindTexture(GL_TEXTURE_2D, sprite1.textureID);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
 		glLineWidth(10);
 		glPointSize(20);
 
-		glBindVertexArray(VAO);
-		// Chamada de desenho - drawcall
-		// Poligono Preenchido - GL_TRIANGLES
+		mat4 model = mat4(1);
+		model = translate(model,background.position);
+		model = rotate(model, radians(0.0f), vec3(0.0, 0.0, 1.0));
+		model = scale(model,background.dimensions);
+		glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
+
+		currTime = glfwGetTime();
+		deltaT = currTime - lastTime;
+
+		if (deltaT >= 1.0/FPS)
+		{
+			background.iFrame = (background.iFrame + 1) % 100;
+		}
+		offsetTexBg.s = background.iFrame * 0.01;
+		offsetTexBg.t = 0.0;
+		glUniform2f(glGetUniformLocation(shaderID, "offsetTex"),offsetTexBg.s, offsetTexBg.t);
+
+		glBindVertexArray(background.VAO);
+		glBindTexture(GL_TEXTURE_2D, background.textureID);
+
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-		// item c) exercicio 6
-		// glDrawArrays(GL_POINTS, 0, 6);
+		//desenhando o sprite animado
+		model = mat4(1);
+		model = translate(model,grumi.position);
+		model = rotate(model, radians(0.0f), vec3(0.0, 0.0, 1.0));
+		model = scale(model,grumi.dimensions);
+		glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
 
-		// glBindVertexArray(0); // Desnecessário aqui, pois não há múltiplos VAOs
+		vec2 offsetTex;
+
+		if (deltaT >= 1.0/FPS)
+		{
+			grumi.iFrame = (grumi.iFrame + 1) % grumi.nFrames;
+			lastTime = currTime;
+		}
+
+		offsetTex.s = grumi.iFrame * grumi.ds;
+		offsetTex.t = 0.0;
+		glUniform2f(glGetUniformLocation(shaderID, "offsetTex"),offsetTex.s, offsetTex.t);
+
+		glBindVertexArray(grumi.VAO);
+		glBindTexture(GL_TEXTURE_2D, grumi.textureID);
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glfwSwapBuffers(window);
 	}
-	glDeleteVertexArrays(1, &VAO);
+		
 	glfwTerminate();
 	return 0;
 }
@@ -263,26 +271,22 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 		if (key == GLFW_KEY_RIGHT) {
-			sprite1.position.x += moveSpeed;
+			grumi.position.x += moveSpeed;
+			grumi.iAnimation = 0;
 		}
 		if (key == GLFW_KEY_LEFT) {
-			sprite1.position.x -= moveSpeed;
+			grumi.position.x -= moveSpeed;
+			grumi.iAnimation = 0;
 		}
 		if (key == GLFW_KEY_UP) {
-			sprite1.position.y += moveSpeed;
+			grumi.position.y += moveSpeed;
+			grumi.iAnimation = 0;
 		}
 		if (key == GLFW_KEY_DOWN) {
-			sprite1.position.y -= moveSpeed;
+			grumi.position.y -= moveSpeed;
+			grumi.iAnimation = 0;
 		}
 	}
-	//wrap-around mantendo o personagem andando na tela
-	if (sprite1.position.x > 800.0f) sprite1.position.x = 0.0f;
-	if (sprite1.position.x < 0.0f) sprite1.position.x = 800.0f;
-	if (sprite1.position.y > 800.0f) sprite1.position.y = 0.0f;
-	if (sprite1.position.y < 0.0f) sprite1.position.y = 800.0f;
-	//limitando o quanto o personagem pode se mover no eixo Y
-	if (sprite1.position.y < 100.0f) sprite1.position.y = 100.0f;
-	if (sprite1.position.y > 250.0f) sprite1.position.y = 250.0f;
 }
 
 int setupShader()
@@ -326,81 +330,77 @@ int setupShader()
 	return shaderProgram;
 }
 
-// Esta função está bastante harcoded - objetivo é criar os buffers que armazenam a
-// geometria de um triângulo
-// Apenas atributo coordenada nos vértices
-// 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
-// A função retorna o identificador do VAO
-int setupSprite()
+int setupSprite(int nAnimations, int nFrames, float &ds, float &dt)
 {
-	GLfloat vertices[] = {
-		// x   y    z    s     t
-		-0.5,  0.5, 0.0, 0.0, 1.0, //V0
-		-0.5, -0.5, 0.0, 0.0, 0.0, //V1
-		 0.5,  0.5, 0.0, 1.0, 1.0, //V2
-		 0.5, -0.5, 0.0, 1.0, 0.0  //V3
-		};
 
-	GLuint VBO, VAO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	ds = 1.0f / (float)nFrames;
+	dt = 1.0f / (float)nAnimations;
 
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+    GLfloat vertices[] = {
+        // x   y    z    s     t
+        -0.5f,  0.5f, 0.0f, 0.0f, dt, //V0
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, //V1
+         0.5f,  0.5f, 0.0f, ds, dt, //V2
+         0.5f, -0.5f, 0.0f, ds, 0.0f  //V3
+    };
 
-	// Ponteiro pro atributo 0 - Posição - coordenadas x, y, z
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)0);
-	glEnableVertexAttribArray(0);
+    GLuint VBO, VAO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	// Ponteiro pro atributo 1 - Coordenada de textura s, t
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)0);
+    glEnableVertexAttribArray(0);
 
-	glBindVertexArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
 
-	return VAO;
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    return VAO;
 }
 
-int loadTexture(string filePath)
+int loadTexture(string filePath, int &width, int &height)
 {
-	GLuint texID;
+    GLuint texID;
 
-	glGenTextures(1, &texID);
-	glBindTexture(GL_TEXTURE_2D, texID);
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	int width, height, nrChannels;
+    int nrChannels;
 
-	unsigned char *data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
 
-	if (data)
-	{
-		if (nrChannels == 3) // jpg, bmp
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		}
-		else // png
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		}
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
+    if (data)
+    {
+        if (nrChannels == 3)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        }
+        else
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        }
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
 
-	stbi_image_free(data);
+    stbi_image_free(data);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-	return texID;
+    return texID;
 }
