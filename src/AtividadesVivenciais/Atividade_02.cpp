@@ -143,10 +143,10 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	layer1.textureID = loadTexture("../assets/backgrounds/summer 2/layers/1.png"); //layer com nuvens
-	layer2.textureID = loadTexture("../assets/backgrounds/summer 2/layers/4.png"); //layer com outras nuvens
-	layer3.textureID = loadTexture("../assets/backgrounds/summer 2/layers/2.png"); //layer com chão
-	layer4.textureID = loadTexture("../assets/backgrounds/summer 2/layers/3.png"); //layer com grama
+	layer1.textureID = loadTexture("../assets/backgrounds/summer5/layers/nuvens.png"); //layer com nuvens
+	layer2.textureID = loadTexture("../assets/backgrounds/summer5/layers/montanhas.png"); //layer com montanhas
+	layer3.textureID = loadTexture("../assets/backgrounds/summer5/layers/base-piso.png"); //layer com base do piso
+	layer4.textureID = loadTexture("../assets/backgrounds/summer5/layers/grama.png"); //layer com grama
 
 	layer1.position = glm::vec2(400.0f, 400.0f);
 	layer2.position = glm::vec2(400.0f, 400.0f);
@@ -196,7 +196,7 @@ int main()
 		glBindVertexArray(VAO);
 		glm::mat4 model;
 
-		//parallax apenas no eixo X
+		//aplicando parallax apenas no eixo X
 		float deltaX = sprite1.position.x - 400.0f;
 		layer1.position = glm::vec2(400.0f + deltaX * 0.2f, 400.0f);
 		layer2.position = glm::vec2(400.0f + deltaX * 0.4f, 400.0f);
@@ -216,7 +216,7 @@ int main()
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
-		//desenhando camadas do background com wrap-around horizontal
+		//wrap-around horizontal das camadas do background
 		for (Sprite layer : layers) {
 			for (int i = -1; i <= 1; ++i) {
 				glm::mat4 model = glm::mat4(1.0f);
@@ -285,8 +285,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 	if (sprite1.position.y > 800.0f) sprite1.position.y = 0.0f;
 	if (sprite1.position.y < 0.0f) sprite1.position.y = 800.0f;
 	//limitando o quanto o personagem pode se mover no eixo Y
-	if (sprite1.position.y < 50.0f) sprite1.position.y = 50.0f;
-	if (sprite1.position.y > 300.0f) sprite1.position.y = 300.0f;
+	if (sprite1.position.y < 100.0f) sprite1.position.y = 100.0f;
+	if (sprite1.position.y > 250.0f) sprite1.position.y = 250.0f;
 }
 
 int setupShader()
