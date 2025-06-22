@@ -27,7 +27,7 @@ ______________________________________________
 
 # AnimaSprites: Controle e Animação de Sprites
 
-## Descrição
+## 💡 Sobre o Programa
 
 - O programa exibe uma cena 2D com um personagem animado (sprite com múltiplos frames) e um fundo estático.
 - O personagem pode ser movimentado pelo teclado nas direções (WASD ou setas).
@@ -38,14 +38,14 @@ ______________________________________________
 - O código implementa um sistema de "wrap-around" horizontal, onde o personagem ao sair de um lado da tela reaparece no outro.
 - Existe uma limitação de movimento vertical, restringindo o personagem a uma faixa equivalente ao "piso" no eixo Y.
 
-## Como funciona
+## 🚀 Como funciona
 
 - O código utiliza GLM para manipulação de vetores, matrizes e transformações.
 - Cada sprite é desenhado aplicando uma matriz de modelo (translação, rotação, escala) e a matriz de projeção ortográfica.
 - O personagem é animado trocando o frame exibido de acordo com o tempo e o movimento.
 - O fundo é composto por uma imagem estática centralizada, porém com um pequeno deslocamento contínuo no offset da textura, criando uma leve sensação de movimento horizontal.
 
-## Controles
+## 🎮 Controles
 - Os controles são realizados por meio do teclado:
 - **W** ou **Seta Cima**: Move o personagem para cima
 - **S** ou **Seta Baixo**: Move o personagem para baixo
@@ -54,7 +54,7 @@ ______________________________________________
 - **ESC**: Fecha o programa.
 
 
-## Observações
+## 📌 Observações
 
 - Para adicionar novos sprites ou alterar o fundo, basta criar novas instâncias da struct Sprite, definir textura, posição, escala e rotação, e desenhar no loop principal.
 - As imagens das texturas devem estar nos caminhos corretos.
