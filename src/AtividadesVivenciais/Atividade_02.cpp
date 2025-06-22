@@ -196,11 +196,12 @@ int main()
 		glBindVertexArray(VAO);
 		glm::mat4 model;
 
-		//parallax 
-		layer1.position = glm::vec2(400.0f, 400.0f) + (sprite1.position - glm::vec2(400.0f, 400.0f)) * 0.2f;
-		layer2.position = glm::vec2(400.0f, 400.0f) + (sprite1.position - glm::vec2(400.0f, 400.0f)) * 0.4f;
-		layer3.position = glm::vec2(400.0f, 400.0f) + (sprite1.position - glm::vec2(400.0f, 400.0f)) * 0.6f;
-		layer4.position = glm::vec2(400.0f, 400.0f) + (sprite1.position - glm::vec2(400.0f, 400.0f)) * 1.0f;
+		//parallax apenas no eixo X
+		float deltaX = sprite1.position.x - 400.0f;
+		layer1.position = glm::vec2(400.0f + deltaX * 0.2f, 400.0f);
+		layer2.position = glm::vec2(400.0f + deltaX * 0.4f, 400.0f);
+		layer3.position = glm::vec2(400.0f + deltaX * 0.6f, 400.0f);
+		layer4.position = glm::vec2(400.0f + deltaX * 1.0f, 400.0f);
 
 		//desenhando camadas do background
 		Sprite layers[] = {layer1, layer2, layer3, layer4};
