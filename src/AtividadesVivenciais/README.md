@@ -48,9 +48,9 @@ ______________________________________________
 ## Descrição
 
 - O usuário controla um personagem chamado Grumi(sprite) usando as setas do teclado (↑ ↓ ← →).
-- O personagem pode se mover livremente na horizontal e dentro de limites verticais definidos (não pode "voar" para fora do piso).
+- Grumi pode se mover livremente na horizontal e dentro de limites verticais definidos (não pode "voar" para fora do piso).
 - O fundo é composto por 4 camadas (nuvens, montanhas, base do piso, grama), todas alinhadas inicialmente.
-- Ao mover o personagem para os lados, as camadas do fundo se deslocam horizontalmente em velocidades diferentes, criando o efeito de **parallax scrolling**:
+- Ao mover Grumi para os lados, as camadas do fundo se deslocam horizontalmente em velocidades diferentes, criando o efeito de **parallax scrolling**:
   - Camadas mais próximas (grama e piso) se movem mais rápido.
   - Camadas mais distantes (nuvens e montanhas) se movem mais devagar.
 - O personagem faz wrap-around horizontal: ao sair de um lado da tela, aparece do outro.
@@ -65,7 +65,7 @@ ______________________________________________
 
 ## Controles
 
-- Setas do teclado: movimentam o personagem.
+- Setas do teclado: movimentam o Grumi.
 - ESC: fecha a aplicação.
 
 ## Observações
